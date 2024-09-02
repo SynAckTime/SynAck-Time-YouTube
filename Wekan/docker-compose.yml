@@ -5,7 +5,7 @@ services:
     restart: always
     command: mongod --logpath /dev/null --oplogSize 128 --quiet
     networks:
-      - wekan-tier
+      - wekan-net
     expose:
       - 27017
     volumes:
@@ -21,13 +21,13 @@ services:
     container_name: wekan-app
     restart: always
     networks:
-      - wekan-tier
+      - wekan-net
     #ports:
     #  - 80:8080
     environment:
       - WRITABLE_PATH=/data
       - MONGO_URL=mongodb://wekandb:27017/wekan
-      - ROOT_URL=http://localhost
+      - ROOT_URL=https://wekan.synhow.com
       - MAIL_URL=smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}
       - MAIL_FROM=Wekan Notifications <noreply.wekan@mydomain.com>
       - WITH_API=true
