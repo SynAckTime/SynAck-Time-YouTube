@@ -1,4 +1,4 @@
-services:
+grimoire:
   pocketbase:
     image: spectado/pocketbase:0.22.10
     container_name: grimoire-pocketbase
