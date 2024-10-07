@@ -41,5 +41,5 @@ volumes:
 
 networks:
   services:
-    name: services
+    name: grimoire
     external: true
