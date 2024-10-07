@@ -1,4 +1,6 @@
-grimoire:
+version: "3" # Specifies the version of the Docker Compose file format
+
+services:
   pocketbase:
     image: spectado/pocketbase:0.22.10
     container_name: grimoire-pocketbase
