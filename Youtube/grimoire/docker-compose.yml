@@ -34,7 +34,7 @@ services:
 #    ports:
 #      - '$PORT:$PORT'
     networks:
-      - services
+      - grimoire
 volumes:
   pb_data:
   pb_migrations:
