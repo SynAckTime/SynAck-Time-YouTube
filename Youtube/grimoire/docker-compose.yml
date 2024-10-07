@@ -32,7 +32,7 @@ services:
      # timeout: 5s
      # retries: 5
 #    ports:
-#      - '$PORT:$PORT'
+#      - '$PORT:5173'
     networks:
       - grimoire
 volumes:
