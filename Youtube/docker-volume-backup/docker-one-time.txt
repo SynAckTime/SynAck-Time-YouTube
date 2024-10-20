@@ -1,0 +1,21 @@
+#SSH Backup
+docker run --rm \
+  -v /var/lib/docker/volumes:/backup/my-app-backup:ro \
+  -v /home/synack/sshkeys/backupssh.key:/root/.ssh/id_rsa \
+  --env SSH_HOST_NAME="192.168.0.1" \
+  --env SSH_PORT="9006" \
+  --env SSH_USER="backupssh" \
+  --env SSH_REMOTE_PATH="/home/backupssh" \
+  --entrypoint backup \
+  offen/docker-volume-backup:v2
+
+#Local Backup
+docker run --rm \
+  -v /var/lib/docker/volumes:/backup/my-app-backup:ro \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  -v ${HOME}/backups:/archive \
+  -v /etc/localtime:/etc/localtime:ro \
+  --env BACKUP_FILENAME="backup-%Y-%m-%dT%H-%M-%S.tar.gz" \
+  --env BACKUP_LATEST_SYMLINK="backup-latest.tar.gz" \
+  --entrypoint backup \
+  offen/docker-volume-backup:v2
