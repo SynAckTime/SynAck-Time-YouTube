@@ -1,16 +1,17 @@
-version: "3.8"
+#version: "3.8"
 
 services:
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:0.22.27
     container_name: pocketbase
     restart: unless-stopped
-    ports:
-      - "8090:8090"
+    #No need to expose these ports to the internet
+    #ports:
+    # - "8090:8090"
     volumes:
-      - ./pocketbase/pb_data:/pb_data
-      - ./pocketbase/pb_public:/pb_public
-      - ./pocketbase/pb_hooks:/pb_hooks
+      - pb_data:/pb_data
+      - pb_public:/pb_public
+      - pb_hooks:/pb_hooks
     networks:
       - app_network
     environment:
@@ -21,10 +22,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: sveltekit-app
-    ports:
-      - "3000:3000"
+    #Using Nginx for this one
+    #ports:
+    #  - "3000:3000"
     depends_on:
       - pocketbase
+    #Using portainer, so we'll be supplying our environment variables there.
     env_file:
       - .env
     environment:
@@ -47,8 +50,15 @@ services:
     networks:
       - app_network
     volumes:
-      - .:/app
-      - /app/node_modules
+      - app:/app
+      - node_modules:/app/node_modules
+
+volumes:
+  pb_data:
+  pb_public:
+  pb_hooks:
+  app:
+  node_modules:
 
 networks:
   app_network:
