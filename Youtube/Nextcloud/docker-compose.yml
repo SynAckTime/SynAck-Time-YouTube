@@ -1,0 +1,71 @@
+#version: "2.1"
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=ncuser
+      - MYSQL_PASSWORD=ncpassword
+      - MYSQL_HOST=mariadb
+    volumes:
+      - ncconfig:/config
+      - ncdata:/data
+    networks: 
+      - cloud
+    depends_on:
+      - ncmariadb
+    restart: unless-stopped
+  ncmariadb:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: ncmariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD=mariadbpassword
+      - TZ=America/New_York
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=ncuser
+      - MYSQL_PASSWORD=ncpassword
+    networks: 
+      - cloud
+    volumes:
+      - ncmariadb:/config
+    restart: unless-stopped
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - ncredis:/data
+    networks: 
+      - cloud
+  collabora:
+    image: collabora/code:latest
+    container_name: collabora
+    restart: unless-stopped
+    networks: 
+      - cloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - password=password
+      - username=nextcloud
+      - domain=example.com  #Actual domain forwarded with SSL preferably
+      - extra_params=--o:ssl.enable=true
+  #ports:
+   # - 9980:9980
+
+networks:
+  cloud:
+    name: cloud
+    driver: bridge
+
+volumes:
+  ncconfig:
+  ncdata:
+  ncmariadb:
+  ncredis:
