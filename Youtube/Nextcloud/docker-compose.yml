@@ -7,10 +7,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=America/New_York
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=ncuser
-      - MYSQL_PASSWORD=ncpassword
-      - MYSQL_HOST=mariadb
     volumes:
       - ncconfig:/config
       - ncdata:/data
