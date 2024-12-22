@@ -1,4 +1,4 @@
-<h1>ownCloud - Your Own Self Hosted Private Cloud and Collaboration Software</h1>
+<h2>ownCloud - Your Own Self Hosted Private Cloud and Collaboration Software</h2>
 
 Check out our video where we explore ownCloud and then walk you through the entire installation!
 
