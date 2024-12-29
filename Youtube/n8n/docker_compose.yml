@@ -1,0 +1,66 @@
+version: '3.8'
+
+# Define services for the application
+services:
+  # PostgreSQL database service for n8n
+  postgres-n8n:
+    image: postgres:14-alpine # Use a lightweight PostgreSQL image
+    container_name: postgres-n8n
+    #ports:
+    #  - 5432:5432 # Uncomment to expose the database port for external access
+    volumes:
+      - n8n_pgdata:/var/lib/postgresql/data # Persist database data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} # Database password from .env file
+      - POSTGRES_USER=${POSTGRES_USER}         # Database user from .env file
+      - POSTGRES_DB=${POSTGRES_DATABASE}       # Database name from .env file
+    networks:
+      - n8n_network # Attach to the custom network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DATABASE}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always # Ensure service restarts automatically on failure
+
+  # n8n workflow automation service
+  n8n:
+    image: docker.n8n.io/n8nio/n8n # Use the official n8n image
+    container_name: n8n # Set a custom container name
+    #ports: # Uncomment if not using Nginx Proxy Manager
+    #  - "5678:5678"
+    environment:
+      - DB_TYPE=postgresdb # Database type
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DATABASE} # Database name
+      - DB_POSTGRESDB_HOST=${POSTGRES_HOST}         # Database host
+      - DB_POSTGRESDB_PORT=${POSTGRES_PORT}         # Database port
+      - DB_POSTGRESDB_USER=${POSTGRES_USER}         # Database user
+      #- DB_POSTGRESDB_SCHEMA=${POSTGRES_SCHEMA}     # Optional: schema if required
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD} # Database password
+      - TZ=${TIME_ZONE}                             # Timezone setting
+      - N8N_HOST=${SUBDOMAIN}.${DOMAIN_NAME}        # Hostname for n8n instance
+      #- N8N_PORT=5678                              # Optional: specify port
+      - N8N_PROTOCOL=https                          # Use HTTPS for security
+      - NODE_ENV=production                         # Set environment to production
+      - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/ # Webhook URL for external access
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}        # General timezone setting
+    networks:
+      - n8n_network # Attach to the custom network
+    volumes:
+      - n8n_data:/home/node/.n8n # Persist n8n data
+    depends_on:
+      postgres-n8n:
+        condition: service_healthy
+
+
+# Define volumes for persistent storage
+volumes:
+  n8n_data: # Volume for n8n data
+    name: n8n_data
+  n8n_pgdata: # Volume for PostgreSQL data
+    name: n8n_pgdata
+
+# Define a custom network for services
+networks:
+  n8n_network:
+    name: n8n
