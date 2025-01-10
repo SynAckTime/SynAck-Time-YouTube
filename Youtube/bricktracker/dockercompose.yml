@@ -1,0 +1,25 @@
+services:
+  bricktracker:
+    container_name: BrickTracker
+    restart: unless-stopped
+    image: gitea.baerentsen.space/frederikbaerentsen/bricktracker:latest
+    #ports:
+    #  - "3333:3333"
+    volumes:
+      - parts:/app/static/parts
+      - instructions:/app/static/instructions
+      - sets:/app/static/sets
+      - minifigs:/app/static/minifigs
+      - db:/app
+    environment:
+      - REBRICKABLE_API_KEY=${REBRICKABLE_API_KEY}
+      #- DOMAIN_NAME=${DOMAIN_NAME}
+      - LINKS=${LINKS} #optional, enables set numbers to be Rebrickable links on the front page
+      - RANDOM=${RANDOM} #optional, set to True if you want your front page to be shuffled on load
+
+volumes:
+  parts:
+  instructions:
+  sets:
+  minifigs:
+  db:
