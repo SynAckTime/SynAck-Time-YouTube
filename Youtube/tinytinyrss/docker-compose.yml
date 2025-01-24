@@ -7,8 +7,8 @@ services:
   db:
     image: postgres:15-alpine
     restart: unless-stopped
-    #env_file:  # We're using Portainer's environment section
-    #  - .env
+    env_file:
+      - stack.env
     environment:
       - POSTGRES_USER=${TTRSS_DB_USER}
       - POSTGRES_PASSWORD=${TTRSS_DB_PASS}
@@ -19,11 +19,11 @@ services:
   app:
     image: cthulhoo/ttrss-fpm-pgsql-static:latest
     restart: unless-stopped
-    #env_file: # We're using Portainer's environment section
-    #  - .env
+    env_file:
+      - stack.env
     volumes:
       - app:/var/www/html
-      - config:/opt/tt-rss/config.d:ro
+      - ./config.d:/opt/tt-rss/config.d:ro
     depends_on:
       - db
 
@@ -43,30 +43,28 @@ services:
   updater:
     image: cthulhoo/ttrss-fpm-pgsql-static:latest
     restart: unless-stopped
-    #env_file:  # We're using Portainer's environment section
-    #  - .env
+    env_file:
+      - stack.env
     volumes:
       - app:/var/www/html
-      - config:/opt/tt-rss/config.d:ro
+      - ./config.d:/opt/tt-rss/config.d:ro
     depends_on:
       - app
     command: /opt/tt-rss/updater.sh
 
-# We'll be using our own Nginx Proxy Manager, thank you!
-#  web-nginx:
-#    image: cthulhoo/ttrss-web-nginx:latest
-#    restart: unless-stopped
-#    env_file:
-#      - .env
-#    ports:
-#      - ${HTTP_PORT}:80
-#    volumes:
-#      - app:/var/www/html:ro
-#    depends_on:
-#      - app
+  web-nginx:
+    image: cthulhoo/ttrss-web-nginx:latest
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    ports:
+      - ${HTTP_PORT}:80
+    volumes:
+      - app:/var/www/html:ro
+    depends_on:
+      - app
 
 volumes:
   db:
   app:
-  config:
   backups:
