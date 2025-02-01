@@ -11,8 +11,9 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-    ports:
-      - "8080:80"
+      - APP_KEY=${APP_KEY}
+    #ports:
+    #  - "8080:80"
     volumes:
       - data:/var/www/html
     depends_on:
