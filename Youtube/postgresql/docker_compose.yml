@@ -1,37 +1,39 @@
+version: '3.8' # Explicit Docker Compose version
+
 services:
   postgres-db:
     container_name: postgres-db
     image: postgres:16-alpine # Use a lightweight PostgreSQL image
-    #ports:
-    #  - 5432:5432 # Uncomment to expose the database port for external access
     volumes:
       - pgdata:/var/lib/postgresql/data # Persist database data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} # Database password from .env file
       - POSTGRES_USER=${POSTGRES_USER}         # Database user from .env file
-      - POSTGRES_INITDB_ARGS=-A scram-sha-256
+      - POSTGRES_INITDB_ARGS=-A scram-sha-256  # Enforce secure authentication
     networks:
       - postgresql-net
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER}']
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}"] # Ensure database is available
+      interval: 10s  # Run health check every 10 seconds instead of 5
       timeout: 5s
-      retries: 10
-    restart: always # Ensure service restarts automatically on failure
+      retries: 5  # Reduce retries to avoid unnecessary overhead
+    restart: unless-stopped # Allow manual stopping without automatic restart
 
   pgadmin4:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:alpine # Use smaller Alpine-based image
     container_name: pgadmin4
     ports:
-      - 5050:80
+      - 5050:80 # Web UI for pgAdmin
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     networks:
       - postgresql-net
-    restart: always
+    restart: unless-stopped # Allow stopping without unexpected restarts
     volumes:
       - pgastorage:/var/lib/pgadmin
+    depends_on:
+      - postgres-db # Ensure PostgreSQL starts first
 
 volumes:
   pgdata:
