@@ -1,0 +1,42 @@
+services:
+  postgres-db:
+    container_name: postgres-db
+    image: postgres:16-alpine # Use a lightweight PostgreSQL image
+    #ports:
+    #  - 5432:5432 # Uncomment to expose the database port for external access
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persist database data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} # Database password from .env file
+      - POSTGRES_USER=${POSTGRES_USER}         # Database user from .env file
+      - POSTGRES_INITDB_ARGS=-A scram-sha-256
+    networks:
+      - postgresql-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always # Ensure service restarts automatically on failure
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    networks:
+      - postgresql-net
+    restart: always
+    volumes:
+      - pgastorage:/var/lib/pgadmin
+
+volumes:
+  pgdata:
+  pgastorage:
+
+networks:
+  postgresql-net:
+    name: postgresql-net
