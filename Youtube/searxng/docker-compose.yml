@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    command: redis-server --save "" --appendonly "no"
+    networks:
+      - searxng
+    tmpfs:
+      - /var/lib/redis
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    restart: always
+
+  searxng:
+    container_name: searxng
+    image: searxng/searxng:latest
+    networks:
+      - searxng
+    volumes:
+      - searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=https://search.encrypt.monster/
+      - SEARXNG_REDIS_URL=redis://redis:6379/0
+      - SEARXNG_SECRET="w5bJCw7wjwXfMXhjXCw5bJCw7wjwXfMXhjXCPX9BHhLiARruLKWDs3"
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+networks:
+  searxng:
+    ipam:
+      driver: default
+
+volumes:
+
+  searxng:
