@@ -23,6 +23,8 @@ services:
     image: searxng/searxng:latest
     networks:
       - searxng
+    ports:
+      - 8888:8080
     volumes:
       - searxng:/etc/searxng:rw
     environment:
