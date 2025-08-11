@@ -1,0 +1,30 @@
+services:
+  drupal:
+    image: drupal:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - modules:/var/www/html/modules
+      - profiles:/var/www/html/profiles
+      - themes:/var/www/html/themes
+      - sites:/var/www/html/sites
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fWSsfCMfLMBnpKiAfw3fCG5eFvUUKC3hPT
+      POSTGRES_DB: postgres
+    volumes:
+      - data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  modules:
+  profiles:
+  themes:
+  sites:
+  data:
