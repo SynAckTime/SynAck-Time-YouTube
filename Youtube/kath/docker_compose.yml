@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # Backend service (Node.js server)
+  backend:
+    # Build the image using the Dockerfile in the ./server directory
+    build:
+      context: ./server # Path to the directory containing the Dockerfile
+      args:
+        CLIENT_URL: ${APP_URL}
+    container_name: kath-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  # Frontend service (Nginx)
+  frontend:
+    build:
+      context: ./client
+      args:
+        VITE_SOCKET_SERVER_URL: ${SERVER_URL}
+    container_name: kath-frontend
+    #ports:
+    #  - "${PORT}:80"
+    # Wait for the backend service to be ready
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge # Use the default bridge driver
