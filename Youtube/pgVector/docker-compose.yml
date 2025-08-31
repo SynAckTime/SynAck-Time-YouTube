@@ -3,6 +3,8 @@ services:
   postgres:
     image: pgvector/pgvector:pg17
     container_name: pgvector
+    ports:
+      - 5432:5432 # Uncomment to expose the database port for external access
     volumes:
       - pgvectordb:/var/lib/postgresql/data
     environment:
