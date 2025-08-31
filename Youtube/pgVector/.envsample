@@ -1,0 +1,5 @@
+DB_USERNAME=raguser
+DB_PASSWORD=dEs6XQGWNwi6gxLRArTj2m7giUqTquDu3Q2vgkGD5u6ohUaVaBg9fBaYMDhf2P8aVJF
+DB_DATABASE=rag
+PGADMIN_USER=user@domain.com
+PGADMIN_PASS=catsarecool123
