@@ -28,8 +28,8 @@ services:
     volumes:
       - pgadmin4:/var/lib/pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${DB_USERNAME}
-      PGADMIN_DEFAULT_PASSWORD: ${DB_USERNAME}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASS}
     restart: unless-stopped
 
 volumes:
