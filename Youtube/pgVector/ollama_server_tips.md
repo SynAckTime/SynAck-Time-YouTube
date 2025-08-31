@@ -31,3 +31,6 @@ Environment="OLLAMA_HOST=0.0.0.0:11434"
 systemctl daemon-reload
 systemctl restart ollama
 ```
+
+Source:
+https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server
