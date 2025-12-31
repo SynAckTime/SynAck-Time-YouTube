@@ -6,6 +6,7 @@ services:
       - redis
       - redis-cache
     env_file: stack.env
+    user: "unit:root"
     healthcheck:
       test: curl -f http://localhost:8080/login/ || exit 1
       start_period: 90s
